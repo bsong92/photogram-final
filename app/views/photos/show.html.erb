@@ -51,7 +51,8 @@
         Owner
       </dt>
       <dd>
-        <%= @the_photo.owner_id %>
+        <%#= @the_photo.owner_id %>
+        <%= User.where({ :id => @the_photo.owner_id }).at(0).username %>
       </dd>
 
       <dt>

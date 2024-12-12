@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :installs
+  devise_for :users
   # Routes for the Follow request resource:
-
+    
   # CREATE
   post("/insert_follow_request", { :controller => "follow_requests", :action => "create" })
           
@@ -76,9 +76,7 @@ Rails.application.routes.draw do
 
   #------------------------------
 
-  devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # get("/", { :controller => "home", :action => "launch"})
+  root to: "home#launch"
 
-  # Defines the root path route ("/")
-  # root "articles#index"
 end

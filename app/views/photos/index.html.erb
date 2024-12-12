@@ -56,7 +56,7 @@
       </div>
 
       <button>
-        Create photo
+        Add photo
       </button>
     </form>
   </div>
@@ -126,7 +126,8 @@
         </td>
 
         <td>
-          <%= a_photo.owner_id %>
+          <%#= a_photo.owner_id %>
+          <%= User.where({ :id => a_photo.owner_id }).at(0).username %>
         </td>
 
         <td>
