@@ -2,6 +2,15 @@ Rails.application.routes.draw do
   root to: "users#index"
 
   devise_for :users
+
+  #Routes for User resource:
+  get("/users", {:controller => "users", :action => "index"})
+  # post("/users/edit", {:controller => "users", :action => "edit"})
+  # get("/users/:username", {:controller => "users", :action => "profile"})
+  # get("/users/:username/liked_photos", {:controller => "users", :action => "liked_photos"})
+  # get("/users/:username/feed",{:controller => "users", :action => "feed"})
+  # get("/users/:username/discover", {:controller => "users", :action => "discover"})
+
   # Routes for the Follow request resource:
     
   # CREATE
@@ -79,6 +88,6 @@ Rails.application.routes.draw do
   #------------------------------
 
   # get("/", { :controller => "home", :action => "launch"})
-  root to: "home#launch"
+  # root to: "home#launch"
 
 end

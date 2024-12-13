@@ -1,132 +1,98 @@
 <div>
-  <div>
-    <h1>
-      Photo #<%= @the_photo.id %> details
-    </h1>
-
-    <div>
-      <div>
-        <a href="/photos">
-          Go back
-        </a>
-      </div>
-
-      <div>
-        <a href="/delete_photo/<%= @the_photo.id %>">
-          Delete photo
-        </a>
-      </div>
-    </div>
-
-    <dl>
-      <dt>
-        Caption
-      </dt>
-      <dd>
-        <%= @the_photo.caption %>
-      </dd>
-
-      <dt>
-        Comments count
-      </dt>
-      <dd>
-        <%= @the_photo.comments_count %>
-      </dd>
-
-      <dt>
-        Image
-      </dt>
-      <dd>
-        <%= @the_photo.image %>
-      </dd>
-
-      <dt>
-        Likes count
-      </dt>
-      <dd>
-        <%= @the_photo.likes_count %>
-      </dd>
-
-      <dt>
-        Owner
-      </dt>
-      <dd>
-        <%#= @the_photo.owner_id %>
-        <%= User.where({ :id => @the_photo.owner_id }).at(0).username %>
-      </dd>
-
-      <dt>
-        Created at
-      </dt>
-      <dd>
-        <%= time_ago_in_words(@the_photo.created_at) %> ago
-      </dd>
-
-      <dt>
-        Updated at
-      </dt>
-      <dd>
-        <%= time_ago_in_words(@the_photo.updated_at) %> ago
-      </dd>
-    </dl>
-  </div>
+  <%=flash.notice%>
 </div>
-
-<hr>
-
+  
+<h1>Photo Details</h1>
 
 <div>
-  <div>
-    <h2>
-      Edit photo
-    </h2>
+<dl>
+  <dt>Image</dt>
+    <dd><img src="<%=@the_photo.image%>" class = "image_responsive"></dd>
+  
+  <dt>Caption</dt>
+    <dd><%=@the_photo.caption%></dd>
+  
+  <dt>Owner</dt>
+    <dd><%=User.where(:id => @the_photo.owner_id).first.username%></dd>
+  
+  <dt>Posted</dt>
+    <dd><%=time_ago_in_words(@the_photo.created_at)%> ago</dd>
+  
+  <dt>Comments count</dt>
+    <dd><%=@the_photo.comments.count%></dd>
 
-    <form action="/modify_photo/<%= @the_photo.id %>"  method="post" >
-      <div>
-        <label for="caption_box">
-          Caption
-        </label>
+  <dt>Fans</dt>
+    <%fans_records = Like.where(:photo_id => @the_photo.id)%>
+    <%fans_count = fans_records.count%>
+      <% if fans_records.present? %>
+        <%fans_list = Array.new()%>
+        <%fans_records.each do |each_fan|%>
+        <%fans_list = fans_list.push(User.where(:id => each_fan.fan_id).first.username)%>
+        <% end %>
+        <dd><%=fans_list.to_sentence%></dd>  
+      <% end %>
+  <dt>Add a fan</dt>
+    <%is_fan = Like.where(:photo_id => @the_photo.id, :fan_id => current_user.id).first%>
+    <% if is_fan.present? %>
+      <dd><a href="/delete_like/<%=is_fan.id%>">Unlike</a></dd>
+    <% else %>
+      <form action="/insert_like" method = "post">
+      <input type="hidden", name = "query_fan_id", value = "<%=current_user.id%>">
+      <input type="hidden", name = "query_photo_id", value = "<%=@the_photo.id%>">
+      <button>Like</button>
+      </form>
+    <% end %>
 
-        <input type="text" id="caption_box" name="query_caption" value="<%= @the_photo.caption %>">
-      </div>
+  <% if current_user.id == @the_photo.owner_id %>
+    <dt>Edit photo</dt>
+      <dd>
+        <form action="/modify_photo/<%=@the_photo.id%>" method = "post">
+          <label for="image_url_field">Image</label>
+          <input type="text" name = "query_image" id = "image_url_field" placeholder = "Enter a URL for the image..." value = "<%=@the_photo.image.to_s%>">
 
-      <div>
-        <label for="comments_count_box">
-          Comments count
-        </label>
+          <label for="caption_field">Caption</label>
+          <textarea name="query_caption" id="caption_field" rows="2" placeholder = "Enter a caption for the photo..."><%=@the_photo.caption%></textarea>
 
-        <input type="text" id="comments_count_box" name="query_comments_count" value="<%= @the_photo.comments_count %>">
-      </div>
+          <input type="hidden" name = "query_likes_count" value = "<%=@the_photo.likes_count%>">
+          <input type="hidden" name = "query_comments_count" value = "<%=@the_photo.comments_count%>">
+          <input type="hidden" name = "query_owner_id" value = "<%=@the_photo.owner_id%>">
+          <button>Update photo</button>    
+        </form>
 
-      <div>
-        <label for="image_box">
-          Image
-        </label>
+      </dd>  
+    <dt>Delete photo</dt>
+      <dd><a href="/delete_photo/<%=@the_photo.id%>">Delete this photo</a></dd>
+  <% end %>
+</dl>
 
-        <input type="text" id="image_box" name="query_image" value="<%= @the_photo.image %>">
-      </div>
-
-      <div>
-        <label for="likes_count_box">
-          Likes count
-        </label>
-
-        <input type="text" id="likes_count_box" name="query_likes_count" value="<%= @the_photo.likes_count %>">
-      </div>
-
-      <div>
-        <label for="owner_id_box">
-          Owner
-        </label>
-
-        <input type="text" id="owner_id_box" name="query_owner_id" value="<%= @the_photo.owner_id %>">
-      </div>
-
-      <button>
-        Update photo
-      </button>
-    </form>
-  </div>
 </div>
 
-<hr>
+<h1>Comments</h1>
+<table>
+  <tr>
+    <th>Commenter</th>
+    <th>Comment</th>
+    <th>Posted</th>
+  </tr>
+
+  <%comments = Comment.where(:photo_id => @the_photo.id)%>
+  <%comments.all.each do |each_comment|%>
+  <tr>
+    <td><%=User.where(:id => each_comment.author_id).first.username%></td>
+    <td><%=each_comment.body%></td>
+    <td><%=time_ago_in_words(each_comment.created_at)%> ago</td>
+  
+  </tr>
+  <% end %>
+
+</table>
+
+<h2>Add a new comment</h2>
+
+<form action="/insert_comment" method = "post">
+  <label for="comment_field">Comment</label>
+  <textarea name="query_body" id="comment_field" rows="2" placeholder ="Enter a comment..."></textarea>
+  <input type="hidden" name = "query_author_id" value = "<%=current_user.id%>">
+  <input type="hidden" name = "query_photo_id" value ="<%=@the_photo.id%>">
+  <button>Add comment</button>
+</form>

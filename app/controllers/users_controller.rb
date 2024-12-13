@@ -38,8 +38,10 @@ class UsersController < ApplicationController
   skip_before_action(:authenticate_user!, { :only => [:index] })
   #index
     def index
+      @list_of_users = User.all
       render({:template => "users/index"})
-    end 
+    end
+    
     def profile
       @this_user = User.where(:username => params.fetch("username")).first
       
@@ -59,15 +61,19 @@ class UsersController < ApplicationController
       @this_user = User.where(:username => params.fetch("username")).first
       @all_leaders = @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id)
       @all_leader_photos = Photo.where(owner_id: @all_leaders)
+      
       render({:template => "users/feed"})
     end
+    
     def discover
       @this_user = User.where(:username => params.fetch("username")).first
       @all_leaders = User.where(id: @this_user.follow_sent.where(:status => "accepted").pluck(:recipient_id))
       @all_leader_likes = Like.where(fan_id: @all_leaders.pluck(:id))
       @all_leader_liked_photos = Photo.where(id: @all_leader_likes.pluck(:photo_id))
+      
       render({:template => "users/discover"})
     end 
+    
     def current_user_can_view_details?(user)
       @this_user = User.where(:username => params.fetch("username")).first
       return true if current_user.id == @this_user.id
