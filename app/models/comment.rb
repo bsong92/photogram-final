@@ -20,6 +20,8 @@ class Comment < ApplicationRecord
   # # Comment#photo: returns a row from the photos table associated to this comment by the photo_id column
 
   # belongs_to( :photo, class_name: "Photo", foreign_key: "photo_id")
-
+  validates(:author_id, presence: true)
+  belongs_to :photo
+  belongs_to :author, class_name: "User"
 
 end

@@ -17,6 +17,12 @@ class Photo < ApplicationRecord
   # has_many :likes, dependent: :destroy
   # has_one_attached :image
 
+  validates(:owner, presence: true)
+  validates(:image, presence: true)
+  validates(:caption, presence: true)
+  has_many  :comments, dependent: :destroy
+  has_many  :likes, dependent: :destroy
+  belongs_to :owner, class_name: "User"
   mount_uploader :image, ImageUploader
 
   # validates(:poster, { :presence => true })

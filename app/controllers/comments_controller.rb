@@ -31,6 +31,14 @@ class CommentsController < ApplicationController
     end
   end
 
+  #   if the_comment.valid?
+  #     the_comment.save
+  #     redirect_to("/photos/#{the_comment.photo_id}", { :notice => "Comment created successfully." })
+  #   else
+  #     redirect_to("/photos/#{the_comment.photo_id}", { :alert => the_comment.errors.full_messages.to_sentence })
+  #   end
+  # end
+
   def update
     the_id = params.fetch("path_id")
     the_comment = Comment.where({ :id => the_id }).at(0)

@@ -12,12 +12,14 @@ class Like < ApplicationRecord
   # belongs_to :fan, class_name: "User"
   # belongs_to :photo
 
-  validates(:fan, { :presence => true })
-  validates(:photo, { :presence => true })
-  validates(:photo_id, { 
-    :uniqueness => { :scope => [:fan_id] }
-  })
+  # validates(:fan, { :presence => true })
+  # validates(:photo, { :presence => true })
+  # validates(:photo_id, { 
+  #   :uniqueness => { :scope => [:fan_id] }
+  # })
 
+  belongs_to :photo
+  belongs_to :fan, class_name: "User"
   # # Association accessor methods to define:
   
   # ## Direct associations
