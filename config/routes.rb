@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root to: "users#index"
+
   devise_for :users
   # Routes for the Follow request resource:
     

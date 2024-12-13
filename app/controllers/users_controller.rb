@@ -35,7 +35,7 @@ class UsersController < ApplicationController
 #   end
 # end
 
-  skip_before_action(:authenticate_user!, {:only => [:index]})
+  skip_before_action(:authenticate_user!, { :only => [:index] })
   #index
     def index
       render({:template => "users/index"})
